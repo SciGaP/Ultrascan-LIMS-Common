@@ -5,7 +5,7 @@
  * Submits an analysis using the airvata thrift API method
  *
  */
-require_once $class_dir . 'jobsubmit_aira.php';
+require_once $class_dir . 'jobsubmit_data.php';
 
 include 'thrift_includes.php';
 use Airavata\Model\Workspace\Experiment\ComputationalResourceScheduling;
@@ -14,9 +14,9 @@ use Airavata\Model\Workspace\Experiment\AdvancedOutputDataHandling;
 use Airavata\Model\Workspace\Experiment\Experiment;
 use Airavata\Model\AppCatalog\AppInterface\InputDataObjectType;
 
-class submit_airavata extends airavata_jobsubmit
+class submit_airavata extends jobsubmit_data
 {
- 
+
    // Submits data
    function submit()
    {
@@ -29,14 +29,12 @@ class submit_airavata extends airavata_jobsubmit
       $this->message[] = "End of submit_airavata.php\n";
    }
 
-   // Function to create the job xml
+   // Function to create the airavata experiment
    function createExperiment()
    {
       global $globaldbname, $globaldbhost,$filename,$airavataclient,$class_dir;
       $cluster     = $this->data[ 'job' ][ 'cluster_shortname' ];
       $hostname    = $this->grid[ $cluster ][ 'name' ];
-      $workdir     = $this->grid[ $cluster ][ 'workdir' ];
-      $userdn      = $this->grid[ $cluster ][ 'userdn' ];
       $queue       = $this->data[ 'job' ][ 'cluster_queue' ];
       $dbname      = $this->data[ 'db'  ][ 'name' ];
       $mgroupcount = min( $this->max_mgroupcount() ,
@@ -82,7 +80,6 @@ class submit_airavata extends airavata_jobsubmit
          $thishost    = gethostname();
       $dirPath     = "file://raminder@$thishost:/" . getcwd();
       $input_data  = $dirPath . "/" . $tarFilename;
-      $output_data = 'analysis.tar';
 
       if ( preg_match( "/class_devel/", $class_dir ) )
          $exp_name    = 'US3-ADEV';
@@ -131,7 +128,6 @@ class submit_airavata extends airavata_jobsubmit
       $advHandling = new AdvancedOutputDataHandling();
       $advHandling->outputDataDir = $dirPath;
       $userConfigurationData->advanceOutputDataHandling = $advHandling;
-      //var_dump($userConfigurationData);
       //Exp Inputs 
       $applicationInputs = $airavataclient->getApplicationInputs($us3_appId);
       foreach ($applicationInputs as $applicationInput){
@@ -146,37 +142,6 @@ class submit_airavata extends airavata_jobsubmit
         }
 	}
 	$applicationOutputs = $airavataclient->getApplicationOutputs($us3_appId);
-      /* Experiment input and output data. 
-      $input = new DataObjectType();
-      $input->key = "input";
-      $input->value = $input_data;
-      $input->type = DataType::URI;
-
-      $input1 = new DataObjectType();
-      $input1->key = "walltime";
-      $input1->value = "-walltime=" . $maxWallTime;
-      $input1->type = DataType::STRING;
-
-      $input2 = new DataObjectType();
-      $input2->key = "mgroupcount";
-      $input2->value = "-mgroupcount=" . $mgroupcount;
-      $input2->type = DataType::STRING;
-
-      $exInputs = array($input,$input1,$input2);
-
-      $output = new DataObjectType();
-      $output->key = "output";
-      $output->type = DataType::URI;
-
-      $output1 = new DataObjectType();
-      $output1->key = "stdout";
-      $output1->type = DataType::STDOUT;
-
-      $output2 = new DataObjectType();
-      $output2->key = "stderr";
-      $output2->type = DataType::STDERR;
-
-      $exOutputs = array($output);*/
 
       $user = "us3";
       $proj = "ultrascan_cd0900d4-2b4d-4919-9aa2-b7649ea1f391";
@@ -189,9 +154,7 @@ class submit_airavata extends airavata_jobsubmit
       $experiment->userConfigurationData = $userConfigurationData;
       $experiment->experimentInputs = $applicationInputs;
       $experiment->experimentOutputs = $applicationOutputs;
-      //var_dump($experiment);     
       $expId = $airavataclient->createExperiment('ultrascan',$experiment);
-      //var_dump($expId);
       $this->message[] = "Experiment $expId created";
 $this->message[] = "    ppn=$ppn  tnodes=$tnodes  nodes=$nodes  cores=$cores";
       return $expId;

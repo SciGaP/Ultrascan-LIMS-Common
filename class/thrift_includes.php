@@ -5,8 +5,11 @@
  * Includes to enable use of the Thrift and Airavata APIs
  *
  */
-$GLOBALS['THRIFT_ROOT'] = '/opt/thrift/lib/Thrift/';
-$GLOBALS['AIRAVATA_ROOT'] = '/opt/thrift/lib/Airavata/';
+/** @var to piont thrift and airavata libraries $airavataconfig */
+$airavataconfig = parse_ini_file('airavata-client-properties.ini');
+
+$GLOBALS['THRIFT_ROOT'] = $airavataconfig['THRIFT_LIB_DIR'];
+$GLOBALS['AIRAVATA_ROOT'] = $airavataconfig['AIRAVATA_PHP_STUBS_DIR'];
 
 require_once $GLOBALS['THRIFT_ROOT'] . 'Transport/TTransport.php';
 require_once $GLOBALS['THRIFT_ROOT'] . 'Transport/TBufferedTransport.php';
@@ -60,7 +63,6 @@ function print_error_message($message)
 }
 
 try{
-$airavataconfig = parse_ini_file("/srv/www/htdocs/common/class/airavata-client-properties.ini");
 
 $transport = new TSocket($airavataconfig['AIRAVATA_SERVER'], $airavataconfig['AIRAVATA_PORT']);
 $transport->setRecvTimeout($airavataconfig['AIRAVATA_TIMEOUT']);
@@ -69,6 +71,7 @@ $transport->setSendTimeout($airavataconfig['AIRAVATA_TIMEOUT']);
 $protocol = new TBinaryProtocol($transport);
 $transport->open();
 $airavataclient = new AiravataClient($protocol);
+
 }
 catch (TException $ire)
     {

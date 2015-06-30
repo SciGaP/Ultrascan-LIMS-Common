@@ -1,11 +1,11 @@
 <?php
 /*
- * jobsubmit_aira.php
+ * jobsubmit_data.php
  *
  * Base class for common elements used to submit an analysis
  *
  */
-class airavata_jobsubmit
+class jobsubmit_data
 {
    protected $data    = array();   // Global parsed input
    protected $jobfile = "";        // Global string
@@ -17,105 +17,19 @@ class airavata_jobsubmit
    {
       global $globaldbname;
 
-      $subhost = "http://gridfarm005.ucs.indiana.edu";
-      $subport = 8080;
-
-      $this->grid[ 'bcf' ] = array 
-      (
-        "name"       => "bcf.uthscsa.edu",
-        "submithost" => $subhost,
-        "userdn"     => "/C=US/O=National Center for Supercomputing Applications/CN=Ultrascan3 Community User",
-        "submittype" => "http",
-        "httpport"   => $subport,
-        "workdir"    => "/ogce-rest/job/runjob/async",
-        "sshport"    => 22,
-        "queue"      => "default",
-        "maxtime"    => 240,
-        "ppn"        => 2,
-        "ppbj"       => 8,
-        "maxproc"    => 12
-      );
-    
-      $this->grid[ 'bcf-local' ] = array 
-      (
-        "name"       => "bcf.uthscsa.edu",
-        "submittype" => "local",
-        "workdir"    => "/home/us3/work/",  // Need trailing slash
-        "sshport"    => 22,
-        "queue"      => "default",
-        "maxtime"    => 240,
-        "ppn"        => 2,
-        "ppbj"       => 8,
-        "maxproc"    => 12
-      );
-
       $this->grid[ 'alamo' ] = array 
       (
         "name"       => "alamo.uthscsa.edu",
-        "submithost" => $subhost,
-        "userdn"     => "/C=US/O=National Center for Supercomputing Applications/CN=Ultrascan3 Community User",
-        "submittype" => "http",
-        "httpport"   => $subport,
-        "workdir"    => "/ogce-rest/job/runjob/async",
-        "sshport"    => 22,
         "queue"      => "batch",
         "maxtime"    => 2160,
         "ppn"        => 24,
         "ppbj"       => 24,
         "maxproc"    => 48
       );
-    
-      $this->grid[ 'alamo-local' ] = array 
-      (
-        "name"       => "alamo.uthscsa.edu",
-        "submittype" => "local",
-        "workdir"    => "/home/us3/work/",  // Need trailing slash
-        "sshport"    => 22,
-        "queue"      => "",
-        "maxtime"    => 2160,
-        "ppn"        => 24,
-        "ppbj"       => 24,
-        "maxproc"    => 48
-      );
-
-      $this->grid[ 'jacinto' ] = array 
-      (
-        "name"       => "jacinto.uthscsa.edu",
-        "submithost" => $subhost,
-        "userdn"     => "/C=US/O=National Center for Supercomputing Applications/CN=Ultrascan3 Community User",
-        "submittype" => "http",
-        "httpport"   => $subport,
-        "workdir"    => "/ogce-rest/job/runjob/async",
-        "sshport"    => 22,
-        "queue"      => "default",
-        "maxtime"    => 2160,
-        "ppn"        => 4,
-        "ppbj"       => 8,
-        "maxproc"    => 32
-      );
-    
-      $this->grid[ 'jacinto-local' ] = array 
-      (
-        "name"       => "jacinto.uthscsa.edu",
-        "submittype" => "local",
-        "workdir"    => "/home/us3/work/",  // Need trailing slash
-        "sshport"    => 22,
-        "queue"      => "",
-        "maxtime"    => 2160,
-        "ppn"        => 4,
-        "ppbj"       => 8,
-        "maxproc"    => 32
-      );
 
       $this->grid[ 'lonestar' ] = array 
       (
         "name"       => "lonestar.tacc.teragrid.org",
-        "submithost" => $subhost,
-        "userdn"     => "/C=US/O=National Center for Supercomputing Applications/CN=Ultrascan3 Community User",
-        "submittype" => "http",
-        "httpport"   => $subport,
-        "workdir"    => "/ogce-rest/job/runjob/async",
-        "sshport"    => 22,
         "queue"      => "normal",
         "maxtime"    => 1440,
         "ppn"        => 12,
@@ -126,12 +40,6 @@ class airavata_jobsubmit
       $this->grid[ 'gordon' ] = array 
       (
         "name"       => "gordon.sdsc.edu",
-        "submithost" => $subhost,
-        "userdn"     => "/C=US/O=National Center for Supercomputing Applications/CN=Ultrascan3 Community User",
-        "submittype" => "http",
-        "httpport"   => $subport,
-        "workdir"    => "/ogce-rest/job/runjob/async",
-        "sshport"    => 22,
         "queue"      => "normal",
         "maxtime"    => 1440,
         "ppn"        => 16,
@@ -142,12 +50,6 @@ class airavata_jobsubmit
       $this->grid[ 'comet' ] = array 
       (
         "name"       => "comet.sdsc.edu",
-        "submithost" => $subhost,
-        "userdn"     => "/C=US/O=National Center for Supercomputing Applications/CN=Ultrascan3 Community User",
-        "submittype" => "http",
-        "httpport"   => $subport,
-        "workdir"    => "/ogce-rest/job/runjob/async",
-        "sshport"    => 22,
         "queue"      => "normal",
         "maxtime"    => 1440,
         "ppn"        => 24,
@@ -158,31 +60,9 @@ class airavata_jobsubmit
       $this->grid[ 'stampede' ] = array 
       (
         "name"       => "stampede.tacc.xsede.org",
-        "submithost" => $subhost,
-        "userdn"     => "/C=US/O=National Center for Supercomputing Applications/CN=Ultrascan3 Community User",
-        "submittype" => "http",
-        "httpport"   => $subport,
-        "workdir"    => "/ogce-rest/job/runjob/async",
-        "sshport"    => 22,
         "queue"      => "normal",
         "maxtime"    => 1440,
         "ppn"        => 16,
-        "ppbj"       => 32,
-        "maxproc"    => 64
-      );
-    
-      $this->grid[ 'juropa' ] = array 
-      (
-        "name"       => "juropa.fz-juelich.de",
-        "submithost" => $subhost,
-        "userdn"     => "CN=_USER_, O=Ultrascan Gateway, C=DE",
-        "submittype" => "http",
-        "httpport"   => $subport,
-        "workdir"    => "/ogce-rest/job/runjob/async",
-        "sshport"    => 22,
-        "queue"      => "default",
-        "maxtime"    => 1440,
-        "ppn"        => 8,
         "ppbj"       => 32,
         "maxproc"    => 64
       );
